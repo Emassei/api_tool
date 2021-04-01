@@ -1,0 +1,14 @@
+#!/bin/sh
+
+sed -i 's/WORKDIR \/home\/app/#WORKDIR \/home\/app/; s/ENTRYPOINT/#ENTRYPOINT/' ./app/Dockerfile.local
+echo "What name would you like for your project?"
+read project_name
+echo "And what app would you like to create"
+read app_name
+docker-compose -f docker-compose.local.yml run web django-admin startproject $project_name app;
+mkdir ./app/$app_name
+docker-compose -f docker-compose.local.yml run web django-admin startapp $app_name ./app/$app_name;
+sed -i 's/#WORKDIR \/home\/app/WORKDIR \/home\/app/; s/#ENTRYPOINT/ENTRYPOINT/' ./app/Dockerfile.local
+group=$(ls -al | tail -1 | awk '{print $4}')
+sudo chown -R $USER:$group .
+docker-compose -f docker-compose.local.yml up
