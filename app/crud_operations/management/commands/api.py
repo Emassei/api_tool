@@ -13,29 +13,26 @@ import csv
 
 credentials = [('clientID', 'value1'), ('developerAPIKey', 'value2')]
 
-
-def write_csv(name,email,street,zipcode):
-    # Create the HttpResponse object with the appropriate CSV header.
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="test_users.csv"'
-
-    writer = csv.writer(response)
-    writer.writerow([name,email,street,zipcode])
-
-    return response
+def write_to_csv(file_name, csv_list):
+    with open(file_name + '.csv', 'w') as csv_file:
+        csv_file = csv.writer(csv_file)
+        csv_file.writerows(csv_list)
 
 
 def test_pull():
+    grouped_user_list = []
     url = 'http://jsonplaceholder.typicode.com/users'
     response = requests.get(url)
     json_list = response.json()
-    __import__('pudb').set_trace()
+
     for item in json_list:
-        name = item['name']
-        email = item['email']
-        street = item['address']['street'] + item['address']['suite']
-        zip_code = item['address']['zipcode']
-        write_csv(name,email,street,zip_code)
+        user_list = []
+        user_list.append(item['name'])
+        user_list.append(item['email'])
+        user_list.append(item['address']['street'] + item['address']['suite'])
+        user_list.append(item['address']['zipcode'])
+        grouped_user_list.append(user_list)
+    write_to_csv('user_list', grouped_user_list)
     print('done')
 
 
@@ -130,7 +127,6 @@ def pull_accounts():
         'https://api-sandboxdash.norcapsecurities.com'
         '/tapiv3/index.php/v3/getallaccounts', params=credentials)
     json_list = response.json()
-    __import__('pudb').set_trace()
     for account in json_list:
         accountId = account["accountId"]
         accountName = account["accountName"]
@@ -174,5 +170,4 @@ def pull_accounts():
 class Command(BaseCommand):
     def handle(self, *args, **options):
         test_pull()
-
 
