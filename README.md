@@ -37,3 +37,13 @@ docker-compose -f docker-compose.local.yml run web django-admin startapp {name_o
 STATIC_URL = "/staticfiles/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 ```
+
+### Run shell docker django command from shell
+
+```
+id=$(docker ps | grep '8000/tcp' | awk '{print $1}');
+docker exec -it $id python manage.py api;
+docker exec $id bash -c "mkdir /home/app/extract; mv /home/app/*.csv /home/app/extract";
+docker cp $id:/home/app/extract/*.csv .;
+docker exec $id bash -c "rm -rf /home/app/extract";
+```
