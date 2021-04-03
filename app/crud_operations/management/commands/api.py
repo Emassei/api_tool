@@ -37,15 +37,15 @@ def test_pull():
 
 
 def pull_trades():
-    # WIP Trades are going to be weird so I will probably need to write a
-    # nested loop because more than one trade can be associated to party
     response = requests.post(
         'https://api-sandboxdash.norcapsecurities.com'
         '/tapiv3/index.php/v3/getAllTrades', params=credentials)
     json_list = response.json()
     for trades in json_list:
+        grouped_trade_list = []
         for trade in trades:
-            id = trade["id"]
+            trade_list = []
+            trade_id = trade["id"]
             developerAPIKey = trade["developerAPIKey"]
             offeringId = trade["offeringId"]
             trade = trade["accountId"]
@@ -73,6 +73,19 @@ def pull_trades():
             PrincipalApprovalStatus = trade["PrincipalApprovalStatus"]
             PrincipalName = trade["PrincipalName"]
             PrincipalDate = trade["PrincipalDate"]
+
+            grouped_trade_list.append([trade_id, developerAPIKey,offeringId,
+                                       trade,partyId, party_type,escrowId,
+                                       orderId,transactionType,totalAmount,
+                                       totalShares, orderStatus,createdDate,
+                                       createdIpAddress,errors,documentKey,
+                                       esignStatus,users,field1,field2,
+                                       field3,archived_status,
+                                       RRApprovalStatus,RRName,RRApprovalDate,
+                                       PrincipalApprovalStatus,PrincipalName,
+                                       PrincipalDate])
+        write_to_csv('trade_list', grouped_trade_list)
+
     print('done')
 
 
@@ -130,14 +143,14 @@ def pull_accounts():
     for account in json_list:
         accountId = account["accountId"]
         accountName = account["accountName"]
-        type = account["type"]
+        account_type = account["type"]
         entityType = account["entityType"]
         residentType = account["residentType"]
         address1 = account["address1"]
         address2 = account["address2"]
         city = account["city"]
         state = account["state"]
-        zip = account["zip"]
+        zip_code = account["zip"]
         country = account["country"]
         phone = account["phone"]
         taxID = account["taxID"]
