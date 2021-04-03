@@ -1,0 +1,10 @@
+#!/bin/sh
+
+id=$(docker ps | grep '8000/tcp' | awk '{print $1}');
+docker exec -it $id python manage.py api;
+docker exec $id bash -c "mkdir /home/app/extract; mv /home/app/*.csv /home/app/extract";
+docker cp $id:/home/app/extract .;
+docker exec $id bash -c "rm -rf /home/app/extract";
+bucket_name=$(aws s3 ls | awk '{print $3}');
+aws s3 sync extract s3://$bucket_name --quiet;
+rm -rf extract
