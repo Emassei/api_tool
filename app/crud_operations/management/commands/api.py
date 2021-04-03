@@ -94,6 +94,8 @@ def pull_parties():
         'https://api-sandboxdash.norcapsecurities.com'
         '/tapiv3/index.php/v3/getAllParties', params=credentials)
     json_list = response.json()
+
+    grouped_party_list = []
     for party in json_list:
         partyId = party["partyId"]
         firstName = party["firstName"]
@@ -131,6 +133,20 @@ def pull_parties():
         tags = party["tags"]
         notes = party["notes"]
         field1 = party["field1"]
+        grouped_party_list.append([partyId,firstName,middleInitial,lastName,
+                                   domicile,socialSecurityNumber,dob,
+                                   primAddress1,primAddress2,primCity,
+                                   primState,primZip,primCountry,emailAddress,
+                                   emailAddress2,phone,phone2,occupation,
+                                   associatedPerson,empCountry,empAddress1,
+                                   empAddress2,empCity,empState,empZip,
+                                   currentAnnIncome,avgAnnIncome,
+                                   currentHouseholdIncome,avgHouseholdIncome,
+                                   householdNetworth,kycStatus,amlStatus,
+                                   amlDate,tags,notes,field1])
+
+
+    write_to_csv('party_list', grouped_party_list)
     print('done')
 
 
@@ -140,6 +156,7 @@ def pull_accounts():
         'https://api-sandboxdash.norcapsecurities.com'
         '/tapiv3/index.php/v3/getallaccounts', params=credentials)
     json_list = response.json()
+    grouped_account_list = []
     for account in json_list:
         accountId = account["accountId"]
         accountName = account["accountName"]
@@ -175,6 +192,20 @@ def pull_accounts():
         approvalPrincipal = account["approvalPrincipal"]
         approvalLastReview = account["approvalLastReview"]
         field1 = account["field1"]
+
+        grouped_account_list.append([accountId,accountName,account_type,
+                                     entityType,residentType,address1,
+                                     address2,city,state,zip_code,country,
+                                     phone,taxID,kycStatus,kycDate,amlStatus,
+                                     amlDate,suitabilityScore,suitabilityDate,
+                                     suitabilityApprover,accreditedStatus,
+                                     accreditedInvestor,accreditedInvestorDate,
+                                     limit506c,accountTotalLimit,
+                                     singleInvestmentLimit,associatedAC,
+                                     syndicate,tags,notes,approvalStatus,
+                                     approvalPrincipal,approvalLastReview,
+                                     field1])
+    write_to_csv('account_list', grouped_account_list)
     print('done')
 
 
